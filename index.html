@@ -91,11 +91,15 @@
 			position: fixed;
 			top: 0%;
 			left: 0%;
-			height: 78.125%;
-			width: 79.06295754%;
+			/*height: 78.125%;
+			width: 79.06295754%;*/
+			height: 513px;
+			width: 1080px;
 			display: block;
 			border: 2px solid black;
 		}
+		
+		
 
 		#bg {
 			position: relative;
@@ -127,7 +131,7 @@
 		</div>
 	</div>-->
 	<div id="gameContainer">
-		<canvas>
+		<canvas width="1080" height="513">
 			<!--<div id="bg">
 				<div id="michaelStanding"></div>
 			</div>-->
@@ -145,8 +149,8 @@
 				document.querySelector("body").style.backgroundColor = "black";
 			}*/
 			var myCanvas = document.querySelector("canvas");
-			myCanvas.width = $("#gameContainer").width();
-			myCanvas.height = $("#gameContainer").height();
+			//myCanvas.width = $("#gameContainer").width();
+			//myCanvas.height = $("#gameContainer").height();
 			var drawingSurface = myCanvas.getContext("2d");
 			var michaelSurface = myCanvas.getContext("2d");
 			var tableSurface = myCanvas.getContext("2d");
