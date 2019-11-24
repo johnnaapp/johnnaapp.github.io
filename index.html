@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<title>Be More Chill</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<link href="https://fonts.googleapis.com/css?family=Press+Start+2P&display=swap" rel="stylesheet">
+	<style>
+		body {
+			background-color: #f91fbb;
+			width: 100%;
+			height: 100%;
+		}
+
+		#startContainer {
+			min-width: 600px;
+		}
+
+		#startbtn {
+			position: absolute;
+			left: 43%;
+			top: 80%;
+			height: 5%;
+			width: 15%;
+			border: 2px solid black;
+			background-color: black;
+			color: #47c8ef;
+			border-radius: 5px;
+			font-family: 'Press Start 2P', cursive;
+		}
+
+		#startbtntxt {
+			margin: 0;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+		}
+
+		#gameTitle {
+			position: absolute;
+			font-family: 'Press Start 2P', cursive;
+			color: #47c8ef;
+			top: 0%;
+			left: 0%;
+			height: 80%;
+			width: 100%;
+		}
+
+		#titleFirstHalf {
+			position: absolute;
+			top: 30%;
+			left: 35%;
+			font-size: 200%;
+			transform: translate(-35%, -30%);
+			animation: firstHalfColor 5s infinite;
+		}
+
+		#titleSecondHalf {
+			position: absolute;
+			top: 70%;
+			left: 55%;
+			font-size: 300%;
+			transform: translate(-55%, -70%);
+			animation: secondHalfColor 5s infinite;
+		}
+
+		@keyframes firstHalfColor {
+			from {
+				color: #47c8ef
+			}
+
+			to {
+				color: #ce0044
+			}
+		}
+
+		@keyframes secondHalfColor {
+			from {
+				color: #3e0075
+			}
+
+			to {
+				color: #47c8ef
+			}
+		}
+
+		#gameContainer {
+			position: fixed;
+			top: 0%;
+			left: 0%;
+			height: 78.125%;
+			width: 79.06295754%;
+			display: block;
+			border: 2px solid black;
+		}
+
+		#bg {
+			position: relative;
+			top: 0%;
+			left: 0%;
+			width: 100%;
+			height: 100%;
+			background-image: url(BMCassets/bmclunchroom.png);
+		}
+
+	</style>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+
+</head>
+
+<body>
+	<!--<div id="startContainer">
+		<div id="startbtn">
+			<div id="startbtntxt">Start</div>
+		</div>
+		<div id="gameTitle">
+			<div id="titleFirstHalf">
+				<h2>Be More</h2>
+			</div>
+			<div id="titleSecondHalf">
+				<h1>Chill</h1>
+			</div>
+		</div>
+	</div>-->
+	<div id="gameContainer">
+		<canvas>
+			<!--<div id="bg">
+				<div id="michaelStanding"></div>
+			</div>-->
+		</canvas>
+
+
+	</div>
+	<script>
+		$(function() {
+			/*document.querySelector("#startbtn").addEventListener("click", startGame, false);
+
+			function startGame() {
+				document.querySelector("#startContainer").style.display = "none";
+				document.querySelector("#gameContainer").style.display = "block";
+				document.querySelector("body").style.backgroundColor = "black";
+			}*/
+			var myCanvas = document.querySelector("canvas");
+			myCanvas.width = $("#gameContainer").width();
+			myCanvas.height = $("#gameContainer").height();
+			var drawingSurface = myCanvas.getContext("2d");
+			var michaelSurface = myCanvas.getContext("2d");
+			var tableSurface = myCanvas.getContext("2d");
+			var mybackground = document.createElement("img");
+			mybackground.setAttribute("src", "BMCassets/bmclunchroom.png");
+			var michael = document.createElement("img");
+			michael.setAttribute("src", "BMCassets/michaelReel.png");
+			var table = document.createElement("img");
+			table.setAttribute("src", "BMCassets/lunchroomtable.png");
+			var jumping = false;
+			var facingLeft = false;
+
+			var isOnTable = false;
+
+			var atTable = false;
+			var tableX = myCanvas.width * .2;
+			var tableY = myCanvas.height * .79;
+
+
+			var michaelX = 0;
+			var michaelY = myCanvas.height * .76;
+			var tempY = michaelY - (myCanvas.width * 0.06666666666);
+			var michaelFrameX = 0;
+			var currentFrame = 1;
+			var start;
+
+
+			michael.addEventListener("load", loadHandler, false);
+
+			function loadHandler() {
+				drawingSurface.drawImage(mybackground, 0, 0, 1350, 750, 0, 0, myCanvas.width, myCanvas.height);
+				michaelSurface.drawImage(michael, 0, 0, 100, 150, michaelX, michaelY, 0.04444444444 * myCanvas.width, 0.2 * myCanvas.height);
+				tableSurface.drawImage(table, 0, 0, 275, 140, tableX, tableY, myCanvas.width * 0.2037037037, myCanvas.height * 0.18666666666);
+
+			}
+
+			window.addEventListener("keydown", keyHandler, false);
+			window.addEventListener("keypress", keyfast, false);
+			console.log(myCanvas.width);
+
+			function keyfast(event) {
+
+			}
+
+			function keyHandler(event) {
+
+				if (event.keyCode === 39) { // right key
+					start = new Date();
+
+					if (michaelX < myCanvas.width) {
+
+						drawingSurface.clearRect(0, 0, myCanvas.width, myCanvas.height);
+						michaelSurface.clearRect(0, 0, myCanvas.width, myCanvas.height);
+						if (currentFrame < 2) {
+							currentFrame += 1;
+						} else {
+							currentFrame = 1;
+						}
+						if (currentFrame == 1) {
+							michaelFrameX = 0;
+						} else if (currentFrame == 2) {
+							michaelFrameX = 90;
+						}
+						if (isOnTable == true && (michaelX > (tableX + table.width*.45))) {
+							michaelY = myCanvas.height * .76;
+							isOnTable = false;
+						}
+
+						michaelX += (myCanvas.width * 0.0074074074);
+						drawingSurface.drawImage(mybackground, 0, 0, 1350, 750, 0, 0, myCanvas.width, myCanvas.height);
+						michaelSurface.drawImage(michael, michaelFrameX, 0, 100, 150, michaelX, michaelY, 0.04444444444 * myCanvas.width, 0.2 * myCanvas.height);
+						tableSurface.drawImage(table, 0, 0, 275, 140, tableX, tableY, myCanvas.width * 0.2037037037, myCanvas.height * 0.18666666666);
+						facingLeft = false;
+					}
+
+
+				}
+
+				if (event.keyCode === 37) { // left key
+					if (michaelX >= 0) {
+
+						drawingSurface.clearRect(0, 0, myCanvas.width, myCanvas.height);
+						michaelSurface.clearRect(0, 0, myCanvas.width, myCanvas.height);
+						if (currentFrame < 2) {
+							currentFrame += 1;
+						} else {
+							currentFrame = 1;
+						}
+						if (currentFrame == 1) {
+							michaelFrameX = 0;
+						} else if (currentFrame == 2) {
+							michaelFrameX = 90;
+						}
+						michaelX -= (myCanvas.width * 0.0074074074);
+						drawingSurface.drawImage(mybackground, 0, 0, 1350, 750, 0, 0, myCanvas.width, myCanvas.height);
+						if (isOnTable == true && (michaelX + (michael.width / 15) < tableX + (table.width*.13))) {
+							michaelY = myCanvas.height * .76;
+							isOnTable = false;
+						}
+						michaelSurface.save();
+
+						michaelSurface.translate(michaelX + ((2 / 3) * (michael.width * (1 / 3))), michaelY);
+						michaelSurface.scale(-1, 1);
+
+
+						michaelSurface.drawImage(michael, michaelFrameX, 0, 100, 150, null, null, 0.04444444444 * myCanvas.width, 0.2 * myCanvas.height);
+
+
+						michaelSurface.restore();
+						facingLeft = true;
+						tableSurface.drawImage(table, 0, 0, 275, 140, tableX, tableY, myCanvas.width * 0.2037037037, myCanvas.height * 0.18666666666);
+					}
+				}
+			}
+
+			window.addEventListener("keydown", jump, false);
+			//window.addEventListener("keyup", jumpDown, false);
+
+			var jump = false;
+
+
+			function jump(event) {
+				if (event.keyCode === 38) {
+					console.log(michaelX);
+					console.log(tableX + table.width);
+					console.log(michaelX + michael.width);
+					console.log(tableX);
+					if (michaelX < tableX + (table.width*(1/2)) && michaelX + (michael.width / 15) > tableX +(table.width*(1/5))) {
+						jumpTable();
+					} else {
+						jumpUp();
+						setTimeout(jumpDown, 300);
+					}
+
+				}
+
+			}
+
+
+
+			function jumpTable() {
+				isOnTable = true;
+				overTable();
+				setTimeout(onTable, 300);
+
+			}
+
+			function overTable() {
+				if (michaelY > tempY) {
+					drawingSurface.clearRect(0, 0, myCanvas.width, myCanvas.height);
+					michaelSurface.clearRect(0, 0, myCanvas.width, myCanvas.height);
+					michaelY -= (myCanvas.width * 0.09);
+					currentFrame = 2;
+					michaelFrameX = 200;
+					if (facingLeft == true) {
+						drawingSurface.drawImage(mybackground, 0, 0, 1350, 750, 0, 0, myCanvas.width, myCanvas.height);
+
+						michaelSurface.save();
+
+						michaelSurface.translate(michaelX + ((2 / 3) * (michael.width * (1 / 3))), michaelY);
+						michaelSurface.scale(-1, 1);
+
+						michaelSurface.drawImage(michael, michaelFrameX, 0, 100, 150, null, null, 0.04444444444 * myCanvas.width, 0.2 * myCanvas.height);
+
+						michaelSurface.restore();
+					} else {
+						drawingSurface.drawImage(mybackground, 0, 0, 1350, 750, 0, 0, myCanvas.width, myCanvas.height);
+						michaelSurface.drawImage(michael, michaelFrameX, 0, 100, 150, michaelX, michaelY, 0.04444444444 * myCanvas.width, 0.2 * myCanvas.height);
+					}
+					tableSurface.drawImage(table, 0, 0, 275, 140, tableX, tableY, myCanvas.width * 0.2037037037, myCanvas.height * 0.18666666666);
+					jump = true;
+				}
+			}
+
+			function onTable() {
+				michaelY = (myCanvas.height * .62);
+				michaelFrameX = 0;
+				if (facingLeft == true) {
+					drawingSurface.drawImage(mybackground, 0, 0, 1350, 750, 0, 0, myCanvas.width, myCanvas.height);
+
+					michaelSurface.save();
+
+					michaelSurface.translate(michaelX + ((2 / 3) * (michael.width * (1 / 3))), michaelY);
+					michaelSurface.scale(-1, 1);
+
+
+					michaelSurface.drawImage(michael, michaelFrameX, 0, 100, 150, null, null, 0.04444444444 * myCanvas.width, 0.2 * myCanvas.height);
+
+
+					michaelSurface.restore();
+				} else {
+					drawingSurface.drawImage(mybackground, 0, 0, 1350, 750, 0, 0, myCanvas.width, myCanvas.height);
+					michaelSurface.drawImage(michael, michaelFrameX, 0, 100, 150, michaelX, michaelY, 0.04444444444 * myCanvas.width, 0.2 * myCanvas.height);
+
+				}
+
+				tableSurface.drawImage(table, 0, 0, 275, 140, tableX, tableY, myCanvas.width * 0.2037037037, myCanvas.height * 0.18666666666);
+			}
+
+
+
+			function jumpUp() {
+				if (michaelY > tempY) {
+					drawingSurface.clearRect(0, 0, myCanvas.width, myCanvas.height);
+					michaelSurface.clearRect(0, 0, myCanvas.width, myCanvas.height);
+					michaelY -= (myCanvas.width * 0.06666666666);
+					currentFrame = 2;
+					michaelFrameX = 200;
+					if (facingLeft == true) {
+						drawingSurface.drawImage(mybackground, 0, 0, 1350, 750, 0, 0, myCanvas.width, myCanvas.height);
+
+						michaelSurface.save();
+
+						michaelSurface.translate(michaelX + ((2 / 3) * (michael.width * (1 / 3))), michaelY);
+						michaelSurface.scale(-1, 1);
+
+						michaelSurface.drawImage(michael, michaelFrameX, 0, 100, 150, null, null, 0.04444444444 * myCanvas.width, 0.2 * myCanvas.height);
+
+						michaelSurface.restore();
+					} else {
+						drawingSurface.drawImage(mybackground, 0, 0, 1350, 750, 0, 0, myCanvas.width, myCanvas.height);
+						michaelSurface.drawImage(michael, michaelFrameX, 0, 100, 150, michaelX, michaelY, 0.04444444444 * myCanvas.width, 0.2 * myCanvas.height);
+					}
+					tableSurface.drawImage(table, 0, 0, 275, 140, tableX, tableY, myCanvas.width * 0.2037037037, myCanvas.height * 0.18666666666);
+					jump = true;
+				}
+			}
+
+			function jumpDown() {
+				michaelY = (myCanvas.height * .76);
+				michaelFrameX = 0;
+				if (facingLeft == true) {
+					drawingSurface.drawImage(mybackground, 0, 0, 1350, 750, 0, 0, myCanvas.width, myCanvas.height);
+
+					michaelSurface.save();
+
+					michaelSurface.translate(michaelX + ((2 / 3) * (michael.width * (1 / 3))), michaelY);
+					michaelSurface.scale(-1, 1);
+
+
+					michaelSurface.drawImage(michael, michaelFrameX, 0, 100, 150, null, null, 0.04444444444 * myCanvas.width, 0.2 * myCanvas.height);
+
+
+					michaelSurface.restore();
+				} else {
+					drawingSurface.drawImage(mybackground, 0, 0, 1350, 750, 0, 0, myCanvas.width, myCanvas.height);
+					michaelSurface.drawImage(michael, michaelFrameX, 0, 100, 150, michaelX, michaelY, 0.04444444444 * myCanvas.width, 0.2 * myCanvas.height);
+
+				}
+
+				tableSurface.drawImage(table, 0, 0, 275, 140, tableX, tableY, myCanvas.width * 0.2037037037, myCanvas.height * 0.18666666666);
+			}
+
+		});
+
+	</script>
+</body>
+
+</html>
