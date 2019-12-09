@@ -33,8 +33,8 @@
 			top: 65%;
 			left: 42.5%;
 		}
-		
-		#startbtn:hover{
+
+		#startbtn:hover {
 			background-color: white;
 		}
 
@@ -79,8 +79,8 @@
 			display: none;
 			border: 2px solid black;
 		}
+
 	</style>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
 
 </head>
@@ -103,203 +103,234 @@
 	<canvas width="1080" height="513">
 	</canvas>
 	<script>
-		$(function() {
-			document.querySelector("#startbtn").addEventListener("click", startGame, false);
+		document.querySelector("#startbtn").addEventListener("click", startGame, false);
 
-			function startGame() {
-				document.querySelector("#startContainer").style.display = "none";
-				document.querySelector("canvas").style.display = "block";
+		function startGame() {
+			document.querySelector("#startContainer").style.display = "none";
+			document.querySelector("canvas").style.display = "block";
+		}
+
+		var myCanvas = document.querySelector("canvas");
+		var drawingSurface = myCanvas.getContext("2d");
+		var michaelSurface = myCanvas.getContext("2d");
+		var tableSurface = myCanvas.getContext("2d");
+		var mybackground = document.createElement("img");
+		mybackground.setAttribute("src", "BMCassets/bmclunchroom.png");
+		var michael = document.createElement("img");
+		michael.setAttribute("src", "BMCassets/michaelReel.png");
+		var table = document.createElement("img");
+		table.setAttribute("src", "BMCassets/lunchroomtable.png");
+
+		var facingLeft = false;
+
+		var isOnTable = false;
+
+
+		var tableX = myCanvas.width * .2;
+		var tableY = myCanvas.height * .79;
+
+
+		var michaelX = 0;
+		var michaelY = myCanvas.height * .76;
+		var tempY = michaelY - (myCanvas.width * 0.06666666666);
+		var michaelFrameX = 0;
+		var currentFrame = 1;
+		var start;
+
+
+		mybackground.addEventListener("load", loadHandler, false);
+
+
+		function loadHandler() {
+			drawBackground();
+			drawMichael();
+			drawTable();
+		}
+
+		function drawBackground() {
+			drawingSurface.drawImage(mybackground, 0, 0, 1350, 750, 0, 0, myCanvas.width, myCanvas.height);
+		}
+
+		function drawMichael() {
+			michaelSurface.drawImage(michael, 0, 0, 100, 150, michaelX, michaelY, 0.04444444444 * myCanvas.width, 0.2 * myCanvas.height);
+		}
+
+		function drawTable() {
+			tableSurface.drawImage(table, 0, 0, 275, 140, tableX, tableY, myCanvas.width * 0.2037037037, myCanvas.height * 0.18666666666);
+		}
+
+		window.addEventListener("keydown", keyHandler, false);
+
+
+		function keyHandler(event) {
+
+			if (event.keyCode === 39) { // right key
+				start = new Date();
+
+				if (michaelX < myCanvas.width * .95) {
+
+					drawingSurface.clearRect(0, 0, myCanvas.width, myCanvas.height);
+					michaelSurface.clearRect(0, 0, myCanvas.width, myCanvas.height);
+					if (currentFrame < 2) {
+						currentFrame += 1;
+					} else {
+						currentFrame = 1;
+					}
+					if (currentFrame == 1) {
+						michaelFrameX = 0;
+					} else if (currentFrame == 2) {
+						michaelFrameX = 90;
+					}
+					if (isOnTable == true && (michaelX > (tableX + table.width * .45))) {
+						michaelY = myCanvas.height * .76;
+						isOnTable = false;
+					}
+
+					michaelX += (myCanvas.width * 0.0074074074);
+					drawingSurface.drawImage(mybackground, 0, 0, 1350, 750, 0, 0, myCanvas.width, myCanvas.height);
+					michaelSurface.drawImage(michael, michaelFrameX, 0, 100, 150, michaelX, michaelY, 0.04444444444 * myCanvas.width, 0.2 * myCanvas.height);
+					tableSurface.drawImage(table, 0, 0, 275, 140, tableX, tableY, myCanvas.width * 0.2037037037, myCanvas.height * 0.18666666666);
+					facingLeft = false;
+				}
+
+
 			}
-			
-			var myCanvas = document.querySelector("canvas");
-			var drawingSurface = myCanvas.getContext("2d");
-			var michaelSurface = myCanvas.getContext("2d");
-			var tableSurface = myCanvas.getContext("2d");
-			var mybackground = document.createElement("img");
-			mybackground.setAttribute("src", "BMCassets/bmclunchroom.png");
-			var michael = document.createElement("img");
-			michael.setAttribute("src", "BMCassets/michaelReel.png");
-			var table = document.createElement("img");
-			table.setAttribute("src", "BMCassets/lunchroomtable.png");
 
-			var facingLeft = false;
+			if (event.keyCode === 37) { // left key
+				if (michaelX >= 0) {
 
-			var isOnTable = false;
+					drawingSurface.clearRect(0, 0, myCanvas.width, myCanvas.height);
+					michaelSurface.clearRect(0, 0, myCanvas.width, myCanvas.height);
+					//Changing character frames
+					if (currentFrame < 2) {
+						currentFrame += 1;
+					} else {
+						currentFrame = 1;
+					}
+					if (currentFrame == 1) {
+						michaelFrameX = 0;
+					} else if (currentFrame == 2) {
+						michaelFrameX = 90;
+					}
+					michaelX -= (myCanvas.width * 0.0074074074);
+					drawingSurface.drawImage(mybackground, 0, 0, 1350, 750, 0, 0, myCanvas.width, myCanvas.height);
+					if (isOnTable == true && (michaelX + (michael.width / 15) < tableX + (table.width * .13))) {
+						michaelY = myCanvas.height * .76;
+						isOnTable = false;
+					}
+
+					//Flipping context
+					michaelSurface.save();
+
+					michaelSurface.translate(michaelX + ((2 / 3) * (michael.width * (1 / 3))), michaelY);
+					michaelSurface.scale(-1, 1);
 
 
-			var tableX = myCanvas.width * .2;
-			var tableY = myCanvas.height * .79;
+					michaelSurface.drawImage(michael, michaelFrameX, 0, 100, 150, null, null, 0.04444444444 * myCanvas.width, 0.2 * myCanvas.height);
 
 
-			var michaelX = 0;
-			var michaelY = myCanvas.height * .76;
-			var tempY = michaelY - (myCanvas.width * 0.06666666666);
-			var michaelFrameX = 0;
-			var currentFrame = 1;
-			var start;
+					michaelSurface.restore();
+
+					facingLeft = true;
+					tableSurface.drawImage(table, 0, 0, 275, 140, tableX, tableY, myCanvas.width * 0.2037037037, myCanvas.height * 0.18666666666);
+				}
+			}
+		}
+
+		window.addEventListener("keydown", jump, false);
 
 
-			mybackground.addEventListener("load", loadHandler, false);
 
+		function jump(event) {
+			if (event.keyCode === 38) { // Up key
+				//if jumping on table
+				if (michaelX < tableX + (table.width * (1 / 2)) && michaelX + (michael.width / 15) > tableX + (table.width * (1 / 5))) {
+					jumpTable();
+				} else {
+					//not jumping on table
+					//jumps and hovers
+					jumpUp();
+					//lands
+					setTimeout(jumpDown, 300);
+				}
 
-			function loadHandler() {
-				drawBackground();
-				drawMichael();
-				drawTable();
 			}
 
-			function drawBackground() {
+		}
+
+
+
+		function jumpTable() {
+			isOnTable = true;
+			//hovers above table
+			overTable();
+			//lands on table
+			setTimeout(onTable, 300);
+
+		}
+
+		function overTable() {
+			if (michaelY > tempY) {
+				drawingSurface.clearRect(0, 0, myCanvas.width, myCanvas.height);
+				michaelSurface.clearRect(0, 0, myCanvas.width, myCanvas.height);
+				michaelY -= (myCanvas.width * 0.09);
+				currentFrame = 2;
+				michaelFrameX = 200;
+				if (facingLeft == true) {
+					drawingSurface.drawImage(mybackground, 0, 0, 1350, 750, 0, 0, myCanvas.width, myCanvas.height);
+
+					//Flipping context
+					michaelSurface.save();
+
+					michaelSurface.translate(michaelX + ((2 / 3) * (michael.width * (1 / 3))), michaelY);
+					michaelSurface.scale(-1, 1);
+
+					michaelSurface.drawImage(michael, michaelFrameX, 0, 100, 150, null, null, 0.04444444444 * myCanvas.width, 0.2 * myCanvas.height);
+
+					michaelSurface.restore();
+				} else {
+					drawingSurface.drawImage(mybackground, 0, 0, 1350, 750, 0, 0, myCanvas.width, myCanvas.height);
+					michaelSurface.drawImage(michael, michaelFrameX, 0, 100, 150, michaelX, michaelY, 0.04444444444 * myCanvas.width, 0.2 * myCanvas.height);
+				}
+				tableSurface.drawImage(table, 0, 0, 275, 140, tableX, tableY, myCanvas.width * 0.2037037037, myCanvas.height * 0.18666666666);
+			}
+		}
+
+		function onTable() {
+			michaelY = (myCanvas.height * .62);
+			michaelFrameX = 0;
+			if (facingLeft == true) {
 				drawingSurface.drawImage(mybackground, 0, 0, 1350, 750, 0, 0, myCanvas.width, myCanvas.height);
-			}
 
-			function drawMichael() {
-				michaelSurface.drawImage(michael, 0, 0, 100, 150, michaelX, michaelY, 0.04444444444 * myCanvas.width, 0.2 * myCanvas.height);
-			}
+				//Flipping context
+				michaelSurface.save();
 
-			function drawTable() {
-				tableSurface.drawImage(table, 0, 0, 275, 140, tableX, tableY, myCanvas.width * 0.2037037037, myCanvas.height * 0.18666666666);
-			}
-
-			window.addEventListener("keydown", keyHandler, false);
+				michaelSurface.translate(michaelX + ((2 / 3) * (michael.width * (1 / 3))), michaelY);
+				michaelSurface.scale(-1, 1);
 
 
-			function keyHandler(event) {
-
-				if (event.keyCode === 39) { // right key
-					start = new Date();
-
-					if (michaelX < myCanvas.width * .95) {
-
-						drawingSurface.clearRect(0, 0, myCanvas.width, myCanvas.height);
-						michaelSurface.clearRect(0, 0, myCanvas.width, myCanvas.height);
-						if (currentFrame < 2) {
-							currentFrame += 1;
-						} else {
-							currentFrame = 1;
-						}
-						if (currentFrame == 1) {
-							michaelFrameX = 0;
-						} else if (currentFrame == 2) {
-							michaelFrameX = 90;
-						}
-						if (isOnTable == true && (michaelX > (tableX + table.width * .45))) {
-							michaelY = myCanvas.height * .76;
-							isOnTable = false;
-						}
-
-						michaelX += (myCanvas.width * 0.0074074074);
-						drawingSurface.drawImage(mybackground, 0, 0, 1350, 750, 0, 0, myCanvas.width, myCanvas.height);
-						michaelSurface.drawImage(michael, michaelFrameX, 0, 100, 150, michaelX, michaelY, 0.04444444444 * myCanvas.width, 0.2 * myCanvas.height);
-						tableSurface.drawImage(table, 0, 0, 275, 140, tableX, tableY, myCanvas.width * 0.2037037037, myCanvas.height * 0.18666666666);
-						facingLeft = false;
-					}
+				michaelSurface.drawImage(michael, michaelFrameX, 0, 100, 150, null, null, 0.04444444444 * myCanvas.width, 0.2 * myCanvas.height);
 
 
-				}
-
-				if (event.keyCode === 37) { // left key
-					if (michaelX >= 0) {
-
-						drawingSurface.clearRect(0, 0, myCanvas.width, myCanvas.height);
-						michaelSurface.clearRect(0, 0, myCanvas.width, myCanvas.height);
-						//Changing character frames
-						if (currentFrame < 2) {
-							currentFrame += 1;
-						} else {
-							currentFrame = 1;
-						}
-						if (currentFrame == 1) {
-							michaelFrameX = 0;
-						} else if (currentFrame == 2) {
-							michaelFrameX = 90;
-						}
-						michaelX -= (myCanvas.width * 0.0074074074);
-						drawingSurface.drawImage(mybackground, 0, 0, 1350, 750, 0, 0, myCanvas.width, myCanvas.height);
-						if (isOnTable == true && (michaelX + (michael.width / 15) < tableX + (table.width * .13))) {
-							michaelY = myCanvas.height * .76;
-							isOnTable = false;
-						}
-						
-						//Flipping context
-						michaelSurface.save();
-
-						michaelSurface.translate(michaelX + ((2 / 3) * (michael.width * (1 / 3))), michaelY);
-						michaelSurface.scale(-1, 1);
-
-
-						michaelSurface.drawImage(michael, michaelFrameX, 0, 100, 150, null, null, 0.04444444444 * myCanvas.width, 0.2 * myCanvas.height);
-
-
-						michaelSurface.restore();
-						
-						facingLeft = true;
-						tableSurface.drawImage(table, 0, 0, 275, 140, tableX, tableY, myCanvas.width * 0.2037037037, myCanvas.height * 0.18666666666);
-					}
-				}
-			}
-
-			window.addEventListener("keydown", jump, false);
-
-
-
-			function jump(event) {
-				if (event.keyCode === 38) { // Up key
-					//if jumping on table
-					if (michaelX < tableX + (table.width * (1 / 2)) && michaelX + (michael.width / 15) > tableX + (table.width * (1 / 5))) {
-						jumpTable();
-					} else {
-						//not jumping on table
-						//jumps and hovers
-						jumpUp();
-						//lands
-						setTimeout(jumpDown, 300);
-					}
-
-				}
+				michaelSurface.restore();
+			} else {
+				drawingSurface.drawImage(mybackground, 0, 0, 1350, 750, 0, 0, myCanvas.width, myCanvas.height);
+				michaelSurface.drawImage(michael, michaelFrameX, 0, 100, 150, michaelX, michaelY, 0.04444444444 * myCanvas.width, 0.2 * myCanvas.height);
 
 			}
 
+			tableSurface.drawImage(table, 0, 0, 275, 140, tableX, tableY, myCanvas.width * 0.2037037037, myCanvas.height * 0.18666666666);
+		}
 
 
-			function jumpTable() {
-				isOnTable = true;
-				//hovers above table
-				overTable();
-				//lands on table
-				setTimeout(onTable, 300);
 
-			}
-
-			function overTable() {
-				if (michaelY > tempY) {
-					drawingSurface.clearRect(0, 0, myCanvas.width, myCanvas.height);
-					michaelSurface.clearRect(0, 0, myCanvas.width, myCanvas.height);
-					michaelY -= (myCanvas.width * 0.09);
-					currentFrame = 2;
-					michaelFrameX = 200;
-					if (facingLeft == true) {
-						drawingSurface.drawImage(mybackground, 0, 0, 1350, 750, 0, 0, myCanvas.width, myCanvas.height);
-						
-						//Flipping context
-						michaelSurface.save();
-
-						michaelSurface.translate(michaelX + ((2 / 3) * (michael.width * (1 / 3))), michaelY);
-						michaelSurface.scale(-1, 1);
-
-						michaelSurface.drawImage(michael, michaelFrameX, 0, 100, 150, null, null, 0.04444444444 * myCanvas.width, 0.2 * myCanvas.height);
-
-						michaelSurface.restore();
-					} else {
-						drawingSurface.drawImage(mybackground, 0, 0, 1350, 750, 0, 0, myCanvas.width, myCanvas.height);
-						michaelSurface.drawImage(michael, michaelFrameX, 0, 100, 150, michaelX, michaelY, 0.04444444444 * myCanvas.width, 0.2 * myCanvas.height);
-					}
-					tableSurface.drawImage(table, 0, 0, 275, 140, tableX, tableY, myCanvas.width * 0.2037037037, myCanvas.height * 0.18666666666);
-				}
-			}
-
-			function onTable() {
-				michaelY = (myCanvas.height * .62);
-				michaelFrameX = 0;
+		function jumpUp() {
+			if (michaelY > tempY) {
+				drawingSurface.clearRect(0, 0, myCanvas.width, myCanvas.height);
+				michaelSurface.clearRect(0, 0, myCanvas.width, myCanvas.height);
+				michaelY -= (myCanvas.width * 0.06666666666);
+				currentFrame = 2;
+				michaelFrameX = 200;
 				if (facingLeft == true) {
 					drawingSurface.drawImage(mybackground, 0, 0, 1350, 750, 0, 0, myCanvas.width, myCanvas.height);
 
@@ -309,75 +340,44 @@
 					michaelSurface.translate(michaelX + ((2 / 3) * (michael.width * (1 / 3))), michaelY);
 					michaelSurface.scale(-1, 1);
 
-
 					michaelSurface.drawImage(michael, michaelFrameX, 0, 100, 150, null, null, 0.04444444444 * myCanvas.width, 0.2 * myCanvas.height);
-
 
 					michaelSurface.restore();
 				} else {
 					drawingSurface.drawImage(mybackground, 0, 0, 1350, 750, 0, 0, myCanvas.width, myCanvas.height);
 					michaelSurface.drawImage(michael, michaelFrameX, 0, 100, 150, michaelX, michaelY, 0.04444444444 * myCanvas.width, 0.2 * myCanvas.height);
-
 				}
-
 				tableSurface.drawImage(table, 0, 0, 275, 140, tableX, tableY, myCanvas.width * 0.2037037037, myCanvas.height * 0.18666666666);
 			}
+		}
+
+		function jumpDown() {
+			michaelY = (myCanvas.height * .76);
+			michaelFrameX = 0;
+			if (facingLeft == true) {
+				drawingSurface.drawImage(mybackground, 0, 0, 1350, 750, 0, 0, myCanvas.width, myCanvas.height);
+
+				//Flipping context
+				michaelSurface.save();
+
+				michaelSurface.translate(michaelX + ((2 / 3) * (michael.width * (1 / 3))), michaelY);
+				michaelSurface.scale(-1, 1);
 
 
+				michaelSurface.drawImage(michael, michaelFrameX, 0, 100, 150, null, null, 0.04444444444 * myCanvas.width, 0.2 * myCanvas.height);
 
-			function jumpUp() {
-				if (michaelY > tempY) {
-					drawingSurface.clearRect(0, 0, myCanvas.width, myCanvas.height);
-					michaelSurface.clearRect(0, 0, myCanvas.width, myCanvas.height);
-					michaelY -= (myCanvas.width * 0.06666666666);
-					currentFrame = 2;
-					michaelFrameX = 200;
-					if (facingLeft == true) {
-						drawingSurface.drawImage(mybackground, 0, 0, 1350, 750, 0, 0, myCanvas.width, myCanvas.height);
 
-						//Flipping context
-						michaelSurface.save();
+				michaelSurface.restore();
+			} else {
+				drawingSurface.drawImage(mybackground, 0, 0, 1350, 750, 0, 0, myCanvas.width, myCanvas.height);
+				michaelSurface.drawImage(michael, michaelFrameX, 0, 100, 150, michaelX, michaelY, 0.04444444444 * myCanvas.width, 0.2 * myCanvas.height);
 
-						michaelSurface.translate(michaelX + ((2 / 3) * (michael.width * (1 / 3))), michaelY);
-						michaelSurface.scale(-1, 1);
-
-						michaelSurface.drawImage(michael, michaelFrameX, 0, 100, 150, null, null, 0.04444444444 * myCanvas.width, 0.2 * myCanvas.height);
-
-						michaelSurface.restore();
-					} else {
-						drawingSurface.drawImage(mybackground, 0, 0, 1350, 750, 0, 0, myCanvas.width, myCanvas.height);
-						michaelSurface.drawImage(michael, michaelFrameX, 0, 100, 150, michaelX, michaelY, 0.04444444444 * myCanvas.width, 0.2 * myCanvas.height);
-					}
-					tableSurface.drawImage(table, 0, 0, 275, 140, tableX, tableY, myCanvas.width * 0.2037037037, myCanvas.height * 0.18666666666);
-				}
 			}
 
-			function jumpDown() {
-				michaelY = (myCanvas.height * .76);
-				michaelFrameX = 0;
-				if (facingLeft == true) {
-					drawingSurface.drawImage(mybackground, 0, 0, 1350, 750, 0, 0, myCanvas.width, myCanvas.height);
+			tableSurface.drawImage(table, 0, 0, 275, 140, tableX, tableY, myCanvas.width * 0.2037037037, myCanvas.height * 0.18666666666);
+		}
 
-					//Flipping context
-					michaelSurface.save();
-
-					michaelSurface.translate(michaelX + ((2 / 3) * (michael.width * (1 / 3))), michaelY);
-					michaelSurface.scale(-1, 1);
-
-
-					michaelSurface.drawImage(michael, michaelFrameX, 0, 100, 150, null, null, 0.04444444444 * myCanvas.width, 0.2 * myCanvas.height);
-
-
-					michaelSurface.restore();
-				} else {
-					drawingSurface.drawImage(mybackground, 0, 0, 1350, 750, 0, 0, myCanvas.width, myCanvas.height);
-					michaelSurface.drawImage(michael, michaelFrameX, 0, 100, 150, michaelX, michaelY, 0.04444444444 * myCanvas.width, 0.2 * myCanvas.height);
-
-				}
-
-				tableSurface.drawImage(table, 0, 0, 275, 140, tableX, tableY, myCanvas.width * 0.2037037037, myCanvas.height * 0.18666666666);
-			}
-
-		});
 	</script>
-</body></html>
+</body>
+
+</html>
