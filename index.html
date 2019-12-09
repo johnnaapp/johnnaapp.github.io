@@ -202,6 +202,7 @@
 
 						drawingSurface.clearRect(0, 0, myCanvas.width, myCanvas.height);
 						michaelSurface.clearRect(0, 0, myCanvas.width, myCanvas.height);
+						//Changing character frames
 						if (currentFrame < 2) {
 							currentFrame += 1;
 						} else {
@@ -218,6 +219,8 @@
 							michaelY = myCanvas.height * .76;
 							isOnTable = false;
 						}
+						
+						//Flipping context
 						michaelSurface.save();
 
 						michaelSurface.translate(michaelX + ((2 / 3) * (michael.width * (1 / 3))), michaelY);
@@ -228,6 +231,7 @@
 
 
 						michaelSurface.restore();
+						
 						facingLeft = true;
 						tableSurface.drawImage(table, 0, 0, 275, 140, tableX, tableY, myCanvas.width * 0.2037037037, myCanvas.height * 0.18666666666);
 					}
@@ -240,10 +244,14 @@
 
 			function jump(event) {
 				if (event.keyCode === 38) { // Up key
+					//if jumping on table
 					if (michaelX < tableX + (table.width * (1 / 2)) && michaelX + (michael.width / 15) > tableX + (table.width * (1 / 5))) {
 						jumpTable();
 					} else {
+						//not jumping on table
+						//jumps and hovers
 						jumpUp();
+						//lands
 						setTimeout(jumpDown, 300);
 					}
 
@@ -255,7 +263,9 @@
 
 			function jumpTable() {
 				isOnTable = true;
+				//hovers above table
 				overTable();
+				//lands on table
 				setTimeout(onTable, 300);
 
 			}
@@ -269,7 +279,8 @@
 					michaelFrameX = 200;
 					if (facingLeft == true) {
 						drawingSurface.drawImage(mybackground, 0, 0, 1350, 750, 0, 0, myCanvas.width, myCanvas.height);
-
+						
+						//Flipping context
 						michaelSurface.save();
 
 						michaelSurface.translate(michaelX + ((2 / 3) * (michael.width * (1 / 3))), michaelY);
@@ -292,6 +303,7 @@
 				if (facingLeft == true) {
 					drawingSurface.drawImage(mybackground, 0, 0, 1350, 750, 0, 0, myCanvas.width, myCanvas.height);
 
+					//Flipping context
 					michaelSurface.save();
 
 					michaelSurface.translate(michaelX + ((2 / 3) * (michael.width * (1 / 3))), michaelY);
@@ -323,6 +335,7 @@
 					if (facingLeft == true) {
 						drawingSurface.drawImage(mybackground, 0, 0, 1350, 750, 0, 0, myCanvas.width, myCanvas.height);
 
+						//Flipping context
 						michaelSurface.save();
 
 						michaelSurface.translate(michaelX + ((2 / 3) * (michael.width * (1 / 3))), michaelY);
@@ -345,6 +358,7 @@
 				if (facingLeft == true) {
 					drawingSurface.drawImage(mybackground, 0, 0, 1350, 750, 0, 0, myCanvas.width, myCanvas.height);
 
+					//Flipping context
 					michaelSurface.save();
 
 					michaelSurface.translate(michaelX + ((2 / 3) * (michael.width * (1 / 3))), michaelY);
