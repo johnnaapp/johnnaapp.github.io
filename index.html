@@ -22,15 +22,20 @@
 		#startbtn {
 			position: relative;
 			text-align: center;
+			padding-top: 10px;
 			height: 30px;
 			width: 15%;
 			border: 2px solid white;
-			background-color: black;
+			background-color: #3e0075;
 			color: #47c8ef;
 			border-radius: 5px;
 			font-family: 'Press Start 2P', cursive;
 			top: 65%;
 			left: 42.5%;
+		}
+		
+		#startbtn:hover{
+			background-color: white;
 		}
 
 
@@ -105,6 +110,7 @@
 				document.querySelector("#startContainer").style.display = "none";
 				document.querySelector("canvas").style.display = "block";
 			}
+			
 			var myCanvas = document.querySelector("canvas");
 			var drawingSurface = myCanvas.getContext("2d");
 			var michaelSurface = myCanvas.getContext("2d");
@@ -115,12 +121,12 @@
 			michael.setAttribute("src", "BMCassets/michaelReel.png");
 			var table = document.createElement("img");
 			table.setAttribute("src", "BMCassets/lunchroomtable.png");
-			var jumping = false;
+
 			var facingLeft = false;
 
 			var isOnTable = false;
 
-			var atTable = false;
+
 			var tableX = myCanvas.width * .2;
 			var tableY = myCanvas.height * .79;
 
@@ -155,12 +161,7 @@
 			}
 
 			window.addEventListener("keydown", keyHandler, false);
-			window.addEventListener("keypress", keyfast, false);
-			console.log(myCanvas.width);
 
-			function keyfast(event) {
-
-			}
 
 			function keyHandler(event) {
 
@@ -234,17 +235,11 @@
 			}
 
 			window.addEventListener("keydown", jump, false);
-			//window.addEventListener("keyup", jumpDown, false);
 
-			var jump = false;
 
 
 			function jump(event) {
-				if (event.keyCode === 38) {
-					console.log(michaelX);
-					console.log(tableX + table.width);
-					console.log(michaelX + michael.width);
-					console.log(tableX);
+				if (event.keyCode === 38) { // Up key
 					if (michaelX < tableX + (table.width * (1 / 2)) && michaelX + (michael.width / 15) > tableX + (table.width * (1 / 5))) {
 						jumpTable();
 					} else {
@@ -288,7 +283,6 @@
 						michaelSurface.drawImage(michael, michaelFrameX, 0, 100, 150, michaelX, michaelY, 0.04444444444 * myCanvas.width, 0.2 * myCanvas.height);
 					}
 					tableSurface.drawImage(table, 0, 0, 275, 140, tableX, tableY, myCanvas.width * 0.2037037037, myCanvas.height * 0.18666666666);
-					jump = true;
 				}
 			}
 
@@ -342,7 +336,6 @@
 						michaelSurface.drawImage(michael, michaelFrameX, 0, 100, 150, michaelX, michaelY, 0.04444444444 * myCanvas.width, 0.2 * myCanvas.height);
 					}
 					tableSurface.drawImage(table, 0, 0, 275, 140, tableX, tableY, myCanvas.width * 0.2037037037, myCanvas.height * 0.18666666666);
-					jump = true;
 				}
 			}
 
